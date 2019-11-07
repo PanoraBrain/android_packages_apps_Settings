@@ -87,4 +87,8 @@
     <string name="notification_sound_vib_screen_on_title">Annoying notifications</string>
     <string name="notification_sound_vib_screen_on_summary">Play sound and vibration for notifications when the screen is on</string>
 
+    <!-- Three-fingers-swipe screenshot -->
+    <string name="three_finger_gesture">Swipe to screenshot</string>
+    <string name="three_finger_gesture_summary">Swipe down with three fingers to take a screenshot</string>
+
 </resources>
