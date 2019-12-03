@@ -83,4 +83,8 @@
     <string name="notification_heads_up_compact_title">Compact Heads Up notifications</string>
     <string name="notification_heads_up_compact_summary">Show brief pop up notifications</string>   
 
+    <!-- Annoying Notifications -->
+    <string name="notification_sound_vib_screen_on_title">Annoying notifications</string>
+    <string name="notification_sound_vib_screen_on_summary">Play sound and vibration for notifications when the screen is on</string>
+
 </resources>
