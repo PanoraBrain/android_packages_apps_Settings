@@ -35,6 +35,13 @@
         android:title="@string/twilight_mode_location_off_dialog_message"
         settings:controller="com.android.settings.display.TwilightLocationPreferenceController"/>
 
+    <co.aospa.framework.preference.SecureSettingSwitchPreference
+        android:key="berry_black_theme"
+        android:dependency="dark_ui_activated"
+        android:title="@string/berry_black_theme_title"
+        android:summary="@string/berry_black_theme_summary"
+        android:defaultValue="false" />
+
     <PreferenceCategory
         android:key="display_category"
         android:title="@string/accessibility_screen_option">
