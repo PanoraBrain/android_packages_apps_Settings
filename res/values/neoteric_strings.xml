@@ -101,4 +101,8 @@
     <string name="hdr_display_summary">Enable peak brightness for HDR content. This will increase battery usage</string>
     <string name="hdr_max_brightness_percent_title">HDR Display intensity</string>
 
+    <!-- Global Actions -->
+    <string name="global_actions_advanced_reboot_title">Enable advanced restart</string>
+    <string name="global_actions_advanced_reboot_summary">Show options for other bootable components in power menu</string>
+
 </resources>
