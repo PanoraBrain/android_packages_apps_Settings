@@ -200,4 +200,11 @@
         </Preference>
     </PreferenceCategory>
 
+    <Preference
+        android:key="hide_applist_setting"
+        android:title="@string/hide_applist_title"
+        android:summary="@string/summary_placeholder"
+        settings:controller="com.android.settings.applications.HideAppListController"
+        android:fragment="com.android.settings.applications.HideAppListSettings" />
+
 </PreferenceScreen>

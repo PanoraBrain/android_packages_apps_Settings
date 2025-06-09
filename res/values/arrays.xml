@@ -1745,4 +1745,16 @@
     <!-- Packages that will not show Display over other apps permission -->
     <string-array name="display_over_apps_permission_change_exempt">
     </string-array>
+
+    <!-- Apps list to hide from Hide developer status setting -->
+    <string-array name="hide_applist_hidden_apps" translatable="false">
+        <item>android</item>
+        <item>com.android.settings</item>
+        <item>com.android.systemui</item>
+        <item>com.android.shell</item>
+        <item>com.android.chrome</item>
+        <item>com.android.webview</item>
+        <item>com.google.android.webview</item>
+    </string-array>
+
 </resources>

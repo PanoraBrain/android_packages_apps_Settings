@@ -60,4 +60,15 @@
     <string name="miscellaneous_pairip_activity_block_title">Block PairIP license verification</string>
     <string name="miscellaneous_pairip_activity_block_summary">Prevent Play Store apps from launching the \"Get this app from Play\" screen when not installed by the Play Store</string>
 
+    <!-- Hide applist -->
+    <string name="search">Search</string>
+    <string name="search_apps">Search apps</string>
+    <string name="hide_applist_title">Hide apps</string>
+    <string name="hide_applist_summary">{count, plural,
+      =1      {# app hidden}
+      other   {# apps hidden}
+    }</string>
+    <string name="menu_show_overlay">Show overlay</string>
+    <string name="menu_hide_overlay">Hide overlay</string>
+
 </resources>
