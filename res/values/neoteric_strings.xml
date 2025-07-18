@@ -79,4 +79,8 @@
     <string name="berry_black_theme_title">Use Black theme</string>
     <string name="berry_black_theme_summary">Force black background colors</string>
 
+    <!-- Compact Headsup -->
+    <string name="notification_heads_up_compact_title">Compact Heads Up notifications</string>
+    <string name="notification_heads_up_compact_summary">Show brief pop up notifications</string>   
+
 </resources>
