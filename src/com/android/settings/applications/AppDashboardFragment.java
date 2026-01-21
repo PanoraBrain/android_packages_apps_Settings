@@ -26,8 +26,13 @@ import android.provider.SearchIndexableResource;
 import android.provider.Settings;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemProperties;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -36,6 +41,7 @@ import androidx.preference.Preference;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settings.applications.appcompat.UserAspectRatioAppsPreferenceController;
+import com.android.settings.applications.SpoofingUtils;
 import com.android.settings.dashboard.DashboardFragment;
 import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.widget.PreferenceCategoryController;
@@ -49,6 +55,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -63,6 +70,7 @@ public class AppDashboardFragment extends DashboardFragment {
     private static final String PIF_DATA_KEY = "pif_data_setting";
     private static final String PIF_PROPS_KEY = "pif_props";
     private static final String PIF_UPDATE_KEY = "pif_update";
+    private static final String KEY_RANDOM_PROPERTIES_BUTTON = "update_pif_auto_random";
 
     private static final String SYS_SPOOF_PI = "persist.sys.pihooks.pi";
     private static final String SYS_SPOOF_PHOTOS = "persist.sys.pihooks.photos";
@@ -71,7 +79,9 @@ public class AppDashboardFragment extends DashboardFragment {
     private ActivityResultLauncher<Intent> mPifFilePickerLauncher;
     private KeyboxDataPreference mKeyboxDataPreference;
     private PifDataPreference mPifDataPreference;
+    private Preference mRandomPropertiesButton;
     private AppsPreferenceController mAppsPreferenceController;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         final List<AbstractPreferenceController> controllers = new ArrayList<>();
@@ -195,6 +205,14 @@ public class AppDashboardFragment extends DashboardFragment {
                 return true;
             });
         }
+
+        mRandomPropertiesButton = findPreference(KEY_RANDOM_PROPERTIES_BUTTON);
+        if (mRandomPropertiesButton != null) {
+            mRandomPropertiesButton.setOnPreferenceClickListener(preference -> {
+                getRandomFingerprint();
+                return true;
+            });
+        }
     }
 
     private void showPifProps() {
@@ -287,6 +305,52 @@ public class AppDashboardFragment extends DashboardFragment {
         } catch (Exception e) {
             android.util.Log.e(TAG, "Failed to kill packages", e);
         }
+    }
+
+    private void getRandomFingerprint() {
+        final AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle("Please wait")
+                .setMessage("Fetching PIF properties...")
+                .setCancelable(false)
+                .setView(new ProgressBar(requireContext()))
+                .create();
+        dialog.show();
+
+        new Thread(() -> {
+            try {
+                Map<String, String> newValues = SpoofingUtils.getRandomFingerprint(
+                        SystemProperties.get("persist.sys.pihooks_DEVICE", ""));
+                
+                String spoofedModel = newValues.get("MODEL");
+
+                JSONObject jsonProps = new JSONObject();
+                for (Map.Entry<String, String> entry : newValues.entrySet()) {
+                    jsonProps.put(entry.getKey(), entry.getValue());
+                }
+
+                Settings.Secure.putString(getContext().getContentResolver(),
+                        Settings.Secure.PIF_DATA, "");
+                Settings.Secure.putString(getContext().getContentResolver(),
+                        Settings.Secure.FETCHED_PIF, jsonProps.toString());
+
+                mHandler.post(() -> {
+                    if (getContext() != null) {
+                        String toastMessage = getString(R.string.toast_spoofing_success, spoofedModel);
+                        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
+                        killTargetPackages(true);
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error generating random PIF", e);
+                mHandler.post(() -> {
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), R.string.toast_spoofing_failure, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } finally {
+                mHandler.post(dialog::dismiss);
+            }
+        }).start();
     }
 
     @VisibleForTesting
