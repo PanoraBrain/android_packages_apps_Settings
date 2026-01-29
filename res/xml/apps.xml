@@ -119,6 +119,12 @@
         android:key="keybox_data_setting"
         android:title="@string/keybox_data_title"/>
 
+    <co.aospa.framework.preference.SystemPropertySwitchPreference
+        android:key="persist.sys.vbmeta.update"
+        android:title="@string/vbmeta_attestation_title"
+        android:summary="@string/vbmeta_attestation_summary"
+        android:defaultValue="false" />
+
     <com.android.settings.applications.PifDataPreference
         android:key="pif_data_setting"
         android:title="@string/pif_data_title"/>

@@ -30,6 +30,10 @@
     <string name="pif_update_title">Update Play Integrity fix</string>
     <string name="pif_update_summary">Force check for updated PIF. This will remove any manually set PIF.</string>
 
+    <!-- Vbmeta hash attestation -->
+    <string name="vbmeta_attestation_title">Autofix VBMeta detection</string>
+    <string name="vbmeta_attestation_summary">Perform key attestation to generate verified boot hash on boot. Requires system restart.</string>
+
     <!-- GMS cert chain -->
     <string name="gms_cert_chain_title">Disable forcing strong integrity</string>
     <string name="gms_cert_chain_summary">Forcing strong integrity breaks apps like Google Pay, enabling this option fixes such apps.</string>
