@@ -64,6 +64,9 @@ public class AppDashboardFragment extends DashboardFragment {
     private static final String PIF_PROPS_KEY = "pif_props";
     private static final String PIF_UPDATE_KEY = "pif_update";
 
+    private static final String SYS_SPOOF_PI = "persist.sys.pihooks.pi";
+    private static final String SYS_SPOOF_PHOTOS = "persist.sys.pihooks.photos";
+
     private ActivityResultLauncher<Intent> mKeyboxFilePickerLauncher;
     private ActivityResultLauncher<Intent> mPifFilePickerLauncher;
     private KeyboxDataPreference mKeyboxDataPreference;
@@ -157,17 +160,41 @@ public class AppDashboardFragment extends DashboardFragment {
             mPifDataPreference.setFilePickerLauncher(mPifFilePickerLauncher);
         }
 
+        Preference spoofPi = findPreference(SYS_SPOOF_PI);
+        if (spoofPi != null) {
+            spoofPi.setOnPreferenceChangeListener((preference, newValue) -> {
+                killTargetPackages(true);
+                return true;
+            });
+        }
+
+        Preference spoofPhotos = findPreference(SYS_SPOOF_PHOTOS);
+        if (spoofPhotos != null) {
+            spoofPhotos.setOnPreferenceChangeListener((preference, newValue) -> {
+                killTargetPackages(false);
+                return true;
+            });
+        }
+
         Preference pifProps = findPreference(PIF_PROPS_KEY);
-        pifProps.setOnPreferenceClickListener(preference -> {
-            showPifProps();
-            return true;
-        });
+        if (pifProps != null) {
+            pifProps.setOnPreferenceClickListener(preference -> {
+                showPifProps();
+                return true;
+            });
+        }
 
         Preference pifUpdate = findPreference(PIF_UPDATE_KEY);
-        pifUpdate.setOnPreferenceClickListener(preference -> {
-            new UpdatePifTask().execute();
-            return true;
-        });
+        if (pifUpdate != null) {
+            pifUpdate.setOnPreferenceClickListener(preference -> {
+                if (!android.os.SystemProperties.getBoolean(SYS_SPOOF_PI, true)) {
+                    Toast.makeText(getContext(), "Enable Play Integrity Spoofing first", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                new UpdatePifTask().execute();
+                return true;
+            });
+        }
     }
 
     private void showPifProps() {
@@ -239,6 +266,7 @@ public class AppDashboardFragment extends DashboardFragment {
                         Settings.Secure.PIF_DATA, "");
                 Settings.Secure.putString(getContext().getContentResolver(),
                         Settings.Secure.FETCHED_PIF, result);
+                killTargetPackages(true);
                 Toast.makeText(getContext(), "PIF updated successfully", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(), "Failed to update PIF", Toast.LENGTH_SHORT).show();
@@ -246,6 +274,20 @@ public class AppDashboardFragment extends DashboardFragment {
         }
     }
 
+    private void killTargetPackages(boolean isGms) {
+        try {
+            android.app.ActivityManager am = (android.app.ActivityManager) 
+                getContext().getSystemService(Context.ACTIVITY_SERVICE);
+            if (isGms) {
+                am.getClass().getMethod("forceStopPackage", String.class).invoke(am, "com.google.android.gms");
+                am.getClass().getMethod("forceStopPackage", String.class).invoke(am, "com.android.vending");
+            } else {
+                am.getClass().getMethod("forceStopPackage", String.class).invoke(am, "com.google.android.apps.photos");
+            }
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to kill packages", e);
+        }
+    }
 
     @VisibleForTesting
     PreferenceCategoryController getAdvancedAppsPreferenceCategoryController() {
