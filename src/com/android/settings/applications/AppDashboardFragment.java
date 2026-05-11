@@ -326,18 +326,40 @@ public class AppDashboardFragment extends DashboardFragment {
                 JSONObject jsonProps = new JSONObject();
                 for (Map.Entry<String, String> entry : newValues.entrySet()) {
                     jsonProps.put(entry.getKey(), entry.getValue());
+                    SystemProperties.set("persist.sys.pihooks_" + entry.getKey(), entry.getValue());
                 }
 
+                String jsonString = jsonProps.toString();
+                
                 Settings.Secure.putString(getContext().getContentResolver(),
-                        Settings.Secure.PIF_DATA, "");
+                        Settings.Secure.PIF_DATA, jsonString);
+
+                String timestamp = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", 
+                        java.util.Locale.getDefault()).format(new java.util.Date());
                 Settings.Secure.putString(getContext().getContentResolver(),
-                        Settings.Secure.FETCHED_PIF, jsonProps.toString());
+                        Settings.Secure.PIF_DATA_TIMESTAMP, timestamp);
+
+                try {
+                    java.io.File pifFile = new java.io.File("/data/system/pif.json");
+                    java.io.FileOutputStream fos = new java.io.FileOutputStream(pifFile);
+                    fos.write(jsonString.getBytes());
+                    fos.close();
+                    pifFile.setReadable(true, false);
+                } catch (java.io.IOException e) {
+                    Log.e(TAG, "Failed to write pif.json", e);
+                }
 
                 mHandler.post(() -> {
                     if (getContext() != null) {
-                        String toastMessage = getString(R.string.toast_spoofing_success, spoofedModel);
-                        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), 
+                        getString(R.string.toast_spoofing_success, spoofedModel), 
+                        Toast.LENGTH_LONG).show();
+                    
                         killTargetPackages(true);
+
+                        if (mPifDataPreference != null) {
+                            mPifDataPreference.setSummary(mPifDataPreference.getSummary());
+                        }
                     }
                 });
             } catch (Exception e) {
