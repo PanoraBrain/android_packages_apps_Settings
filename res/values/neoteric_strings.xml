@@ -30,6 +30,13 @@
     <string name="pif_update_title">Update Play Integrity fix</string>
     <string name="pif_update_summary">Force check for updated PIF. This will remove any manually set PIF.</string>
 
+    <!-- Aospa LAB -->
+    <string name="aospa_lab_title">Aospa LAB</string>
+    <string name="aospa_lab_summary">Spoofing and app tweaks</string>
+    <string name="aospa_lab_category_play_integrity">Play Integrity</string>
+    <string name="aospa_lab_category_spoofing">Spoofing</string>
+    <string name="aospa_lab_category_misc">Misc</string>
+
     <!-- Google Play Integrity Spoof -->
     <string name="pi_spoof_title">Google Play Integrity spoof</string>
     <string name="pi_spoof_summary">Spoof your device as different model for Google Play Integrity</string> 

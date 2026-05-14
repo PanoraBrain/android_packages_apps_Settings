@@ -115,71 +115,6 @@
         android:title="@string/special_access"
         android:order="20"/>
 
-    <co.aospa.framework.preference.SystemPropertySwitchPreference
-        android:key="persist.sys.pihooks.pi"
-        android:title="@string/pi_spoof_title"
-        android:summary="@string/pi_spoof_summary"
-        android:defaultValue="true" />
-
-    <com.android.settings.applications.PifDataPreference
-        android:key="pif_data_setting"
-        android:dependency="persist.sys.pihooks.pi"
-        android:title="@string/pif_data_title"/>
-
-    <com.android.settings.applications.KeyboxDataPreference
-        android:key="keybox_data_setting"
-        android:dependency="persist.sys.pihooks.pi"
-        android:title="@string/keybox_data_title"/>
-
-    <Preference
-        android:key="pif_props"
-        android:dependency="persist.sys.pihooks.pi"
-        android:title="@string/pif_props_title"
-        android:summary="@string/pif_props_summary"/>
-
-    <Preference
-        android:key="pif_update"
-        android:dependency="persist.sys.pihooks.pi"
-        android:title="@string/pif_update_title"
-        android:summary="@string/pif_update_summary"/>
-
-    <Preference
-        android:key="update_pif_auto_random"
-        android:dependency="persist.sys.pihooks.pi"
-        android:title="@string/update_pif_auto_random_title"
-        android:summary="@string/update_pif_auto_random_summary" />
-
-    <!-- <co.aospa.framework.preference.SecureSettingSwitchPreference
-        android:key="gms_cert_chain"
-        android:dependency="persist.sys.pihooks.pi"
-        android:title="@string/gms_cert_chain_title"
-        android:summary="@string/gms_cert_chain_summary"
-        android:defaultValue="true" /> -->
-
-    <co.aospa.framework.preference.SystemPropertySwitchPreference
-        android:key="persist.sys.vbmeta.update"
-        android:dependency="persist.sys.pihooks.pi"
-        android:title="@string/vbmeta_attestation_title"
-        android:summary="@string/vbmeta_attestation_summary"
-        android:defaultValue="false" />
-
-    <co.aospa.framework.preference.SystemPropertySwitchPreference
-        android:key="persist.sys.pihooks.photos"
-        android:title="@string/spoof_photos_title"
-        android:summary="@string/spoof_photos_summary"
-        android:defaultValue="false" />
-
-    <co.aospa.framework.preference.SystemPropertySwitchPreference
-        android:key="persist.sys.pihooks.games"
-        android:title="@string/spoof_games_title"
-        android:summary="@string/spoof_games_summary"
-        android:defaultValue="false" />
-
-    <co.aospa.framework.preference.SystemPropertySwitchPreference
-        android:key="persist.sys.pairip.activity.block"
-        android:title="@string/miscellaneous_pairip_activity_block_title"
-        android:summary="@string/miscellaneous_pairip_activity_block_summary"
-        android:defaultValue="false" /> 
 
     <PreferenceCategory
         android:key="advanced_category"
@@ -199,12 +134,5 @@
             <intent android:action="android.settings.MANAGE_USER_ASPECT_RATIO_SETTINGS"/>
         </Preference>
     </PreferenceCategory>
-
-    <Preference
-        android:key="hide_applist_setting"
-        android:title="@string/hide_applist_title"
-        android:summary="@string/summary_placeholder"
-        settings:controller="com.android.settings.applications.HideAppListController"
-        android:fragment="com.android.settings.applications.HideAppListSettings" />
 
 </PreferenceScreen>

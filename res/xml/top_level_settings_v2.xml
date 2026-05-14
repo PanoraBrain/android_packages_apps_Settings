@@ -65,6 +65,15 @@
             settings:highlightableMenuKey="@string/menu_key_apps"/>
 
         <com.android.settings.widget.HomepagePreference
+            android:fragment="co.aospa.settings.aospalab.AospaLabSettings"
+            android:icon="@drawable/ic_homepage_system_dashboard"
+            android:key="top_level_aospa_lab"
+            android:order="-55"
+            android:title="@string/aospa_lab_title"
+            android:summary="@string/aospa_lab_summary"
+            settings:highlightableMenuKey="@string/menu_key_aospa_lab"/>
+
+        <com.android.settings.widget.HomepagePreference
             android:fragment="com.android.settings.notification.ConfigureNotificationSettings"
             android:icon="@drawable/ic_notifications_filled"
             android:key="top_level_notifications"
