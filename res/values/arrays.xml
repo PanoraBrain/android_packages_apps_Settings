@@ -1757,4 +1757,10 @@
         <item>com.google.android.webview</item>
     </string-array>
 
+    <!-- Apps list excluded from TrickyStore app selection -->
+    <string-array name="trickystore_hidden_apps" translatable="false">
+        <item>android</item>
+        <item>com.android.settings</item>
+    </string-array>
+
 </resources>

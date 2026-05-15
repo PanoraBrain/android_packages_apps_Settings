@@ -48,6 +48,8 @@ public class AospaLabSettings extends DashboardFragment {
 
     private static final String SYS_SPOOF_PI = "persist.sys.pihooks.pi";
     private static final String SYS_SPOOF_PHOTOS = "persist.sys.pihooks.photos";
+    private static final String SYS_TRICKYSTORE_ENABLED = "persist.sys.trickystore.enabled";
+    private static final String SETTING_TRICKYSTORE_ENABLED = "spoof_trickystore_enabled";
 
     private ActivityResultLauncher<Intent> mKeyboxFilePickerLauncher;
     private ActivityResultLauncher<Intent> mPifFilePickerLauncher;
@@ -127,6 +129,18 @@ public class AospaLabSettings extends DashboardFragment {
         if (spoofPhotos != null) {
             spoofPhotos.setOnPreferenceChangeListener((preference, newValue) -> {
                 killTargetPackages(false);
+                return true;
+            });
+        }
+
+        Preference trickystore = findPreference(SYS_TRICKYSTORE_ENABLED);
+        if (trickystore != null) {
+            trickystore.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean enabled = newValue instanceof Boolean && (Boolean) newValue;
+                Settings.System.putInt(
+                        getContext().getContentResolver(),
+                        SETTING_TRICKYSTORE_ENABLED,
+                        enabled ? 1 : 0);
                 return true;
             });
         }

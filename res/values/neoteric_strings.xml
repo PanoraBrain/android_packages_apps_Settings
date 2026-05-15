@@ -53,6 +53,79 @@
     <string name="vbmeta_attestation_title">Autofix VBMeta detection</string>
     <string name="vbmeta_attestation_summary">Perform key attestation to generate verified boot hash on boot. Requires system restart.</string>
 
+    <!-- TrickyStore -->
+    <string name="trickystore_title">TrickyStore</string>
+    <string name="trickystore_summary">Inject keybox attestation for selected apps</string>
+    <string name="trickystore_settings_title">TrickyStore settings</string>
+    <string name="trickystore_hack_apps_title">Attestation spoof apps</string>
+    <string name="trickystore_hack_apps_summary">{count, plural,
+      =0      {No apps selected}
+      =1      {# app selected}
+      other   {# apps selected}
+    }</string>
+    <string name="trickystore_generate_apps_title">Randomized attestation apps</string>
+    <string name="trickystore_generate_apps_summary">{count, plural,
+      =0      {No apps selected}
+      =1      {# app selected}
+      other   {# apps selected}
+    }</string>
+    <string name="ts_master_switch_title">Enable TrickyStore</string>
+    <string name="ts_keybox_management">Keybox management</string>
+    <string name="ts_fetch_keybox">Fetch official keybox</string>
+    <string name="ts_fetch_keybox_summary">Download a trusted keybox from the official server</string>
+    <string name="ts_fetch_keybox_fetching">Fetching keybox...</string>
+    <string name="ts_fetch_keybox_success">Keybox fetched</string>
+    <string name="ts_fetch_keybox_failed">Failed to fetch keybox: %1$s</string>
+    <string name="ts_fetch_keybox_same_file">Keybox already up to date</string>
+    <string name="ts_fetch_keybox_blocked">Fetch disabled while current keybox is valid</string>
+    <string name="ts_fetch_keybox_last_fetched">Last fetched: %1$s</string>
+    <string name="ts_fetch_keybox_revoked_refetch">Keybox revoked. Refetching...</string>
+    <string name="ts_import_keybox">Import keybox</string>
+    <string name="ts_keybox_installed">Keybox installed</string>
+    <string name="ts_no_keybox">No keybox loaded</string>
+    <string name="ts_delete_keybox">Delete keybox</string>
+    <string name="ts_delete_keybox_summary">Remove the current keybox</string>
+    <string name="ts_delete_keybox_title">Delete keybox?</string>
+    <string name="ts_delete_keybox_message">This will remove the installed keybox.</string>
+    <string name="ts_keybox_deleted">Keybox deleted</string>
+    <string name="ts_keybox_imported">Keybox imported</string>
+    <string name="ts_revocation_status">Revocation status</string>
+    <string name="ts_revocation_no_keybox">No keybox installed</string>
+    <string name="ts_revocation_checking">Checking status...</string>
+    <string name="ts_revocation_valid">Valid</string>
+    <string name="ts_revocation_revoked">Revoked %1$s</string>
+    <string name="ts_revocation_suspended">Suspended %1$s</string>
+    <string name="ts_revocation_soft_banned">Soft banned</string>
+    <string name="ts_revocation_error">Check failed: %1$s</string>
+    <string name="ts_target_configuration">Target configuration</string>
+    <string name="ts_manage_target_apps">Manage target apps</string>
+    <string name="ts_no_targets">No targets</string>
+    <string name="ts_import_target_list">Import target list</string>
+    <string name="ts_import_target_list_summary">Import a text list of package names</string>
+    <string name="ts_target_list_imported">Target list imported</string>
+    <string name="ts_verification_mode">Verification mode</string>
+    <string name="ts_verification_mode_auto">Auto</string>
+    <string name="ts_verification_auto_count">Auto: %1$d</string>
+    <string name="ts_verification_cert_count">Generate: %1$d</string>
+    <string name="ts_verification_leaf_count">Leaf: %1$d</string>
+    <string name="ts_security_patch">Security patch override</string>
+    <string name="ts_no_patch">Not set</string>
+    <string name="ts_patch_date_hint">YYYY-MM-DD</string>
+    <string name="ts_invalid_patch_date">Invalid date format</string>
+    <string name="ts_failed">Failed: %1$s</string>
+    <string name="ts_footer_title">About TrickyStore</string>
+    <string name="ts_footer_body">TrickyStore provides custom attestation data for selected apps. Use carefully.</string>
+    <string name="ts_mode_auto">Auto</string>
+    <string name="ts_mode_leaf_hack">Leaf hack</string>
+    <string name="ts_mode_cert_gen">Generate</string>
+    <string name="ts_mode_remove">Remove</string>
+    <string name="ts_select_mode">Select mode for %1$s</string>
+
+    <plurals name="ts_target_apps_count">
+        <item quantity="one">%1$d app selected</item>
+        <item quantity="other">%1$d apps selected</item>
+    </plurals>
+
     <!-- GMS cert chain -->
     <string name="gms_cert_chain_title">Disable forcing strong integrity</string>
     <string name="gms_cert_chain_summary">Forcing strong integrity breaks apps like Google Pay, enabling this option fixes such apps.</string>

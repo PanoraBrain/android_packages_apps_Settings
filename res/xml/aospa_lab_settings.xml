@@ -29,6 +29,19 @@
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/keybox_data_title"/>
 
+        <co.aospa.framework.preference.SystemPropertySwitchPreference
+            android:key="persist.sys.trickystore.enabled"
+            android:title="@string/trickystore_title"
+            android:summary="@string/trickystore_summary"
+            android:defaultValue="false" />
+
+        <Preference
+            android:key="trickystore_settings"
+            android:dependency="persist.sys.trickystore.enabled"
+            android:title="@string/trickystore_settings_title"
+            android:summary="@string/summary_placeholder"
+            android:fragment="co.aospa.settings.aospalab.TrickyStoreSettings" />
+
         <Preference
             android:key="pif_props"
             android:dependency="persist.sys.pihooks.pi"
