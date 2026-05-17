@@ -111,6 +111,7 @@
     <string name="ts_mode_cert_gen">Generate</string>
     <string name="ts_mode_remove">Remove</string>
     <string name="ts_select_mode">Select mode for %1$s</string>
+    <string name="ts_action_delete">Delete</string>
 
     <plurals name="ts_target_apps_count">
         <item quantity="one">%1$d app selected</item>

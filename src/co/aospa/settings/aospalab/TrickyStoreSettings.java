@@ -118,7 +118,7 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
 
         com.android.settingslib.widget.MainSwitchPreference masterSwitch = findPreference(KEY_MASTER_SWITCH);
         if (masterSwitch != null) {
-            masterSwitch.updateStatus(SystemProperties.getBoolean(KEY_MASTER_SWITCH, false));
+            masterSwitch.setChecked(SystemProperties.getBoolean(KEY_MASTER_SWITCH, false));
             masterSwitch.addOnSwitchChangeListener((switchView, isChecked) -> {
                 SystemProperties.set(KEY_MASTER_SWITCH, isChecked ? "true" : "false");
                 Settings.System.putInt(
@@ -724,7 +724,7 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.ts_delete_keybox_title)
                 .setMessage(R.string.ts_delete_keybox_message)
-                .setPositiveButton(R.string.action_delete, (dialog, which) -> {
+                .setPositiveButton(R.string.ts_action_delete, (dialog, which) -> {
                     try {
                         Settings.Secure.putString(
                                 requireContext().getContentResolver(), KEYBOX_KEY, "");
@@ -754,7 +754,7 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
                 .setView(input)
                 .setPositiveButton(android.R.string.ok, null)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setNeutralButton(R.string.action_delete, (d, w) -> {
+                .setNeutralButton(R.string.ts_action_delete, (d, w) -> {
                     Settings.Secure.putString(
                             requireContext().getContentResolver(), PATCH_KEY, "");
                     refreshStatus();
