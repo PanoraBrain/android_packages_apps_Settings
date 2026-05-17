@@ -21,7 +21,7 @@
     <string name="pif_update_summary">Force check for updated PIF. This will remove any manually set PIF.</string>
 
     <!-- Aospa LAB -->
-    <string name="aospa_lab_title">Aospa LAB</string>
+    <string name="aospa_lab_title">AOSPA Lab</string>
     <string name="aospa_lab_summary">Spoofing and app tweaks</string>
     <string name="aospa_lab_category_play_integrity">Play Integrity</string>
     <string name="aospa_lab_category_attestation">Attestation</string>
@@ -29,19 +29,19 @@
     <string name="aospa_lab_category_misc">Misc</string>
 
     <!-- Google Play Integrity Spoof -->
-    <string name="pi_spoof_title">Google Play Integrity spoof</string>
+    <string name="pi_spoof_title">Play Integrity Verification</string>
     <string name="pi_spoof_summary">Spoof your device as different model for Google Play Integrity</string> 
 
     <!-- Google Photos Spoof -->
-    <string name="spoof_photos_title">Google Photos spoof</string>
+    <string name="spoof_photos_title">Unlimited Google Photos</string>
     <string name="spoof_photos_summary">Get unlimited original quality photo storage in Google Photos.</string>
 
     <!-- Game Spoof -->
-    <string name="spoof_games_title">Game spoofing</string>
+    <string name="spoof_games_title">Unlock Game Graphics</string>
     <string name="spoof_games_summary">Unlock higher graphics or FPS in certain games.</string>
 
     <!-- Vbmeta hash attestation -->
-    <string name="vbmeta_attestation_title">Autofix VBMeta detection</string>
+    <string name="vbmeta_attestation_title">Bypass VBMeta Verification</string>
     <string name="vbmeta_attestation_summary">Perform key attestation to generate verified boot hash on boot. Requires system restart.</string>
 
     <!-- TrickyStore -->
@@ -129,7 +129,7 @@
     <string name="toast_spoofing_failure">Failed to spoof properties.</string>
 
     <!-- Miscellaneous -->
-    <string name="miscellaneous_pairip_activity_block_title">Block PairIP license verification</string>
+    <string name="miscellaneous_pairip_activity_block_title">Bypass License Verification</string>
     <string name="miscellaneous_pairip_activity_block_summary">Prevent Play Store apps from launching the \"Get this app from Play\" screen when not installed by the Play Store</string>
 
     <!-- Hide applist -->

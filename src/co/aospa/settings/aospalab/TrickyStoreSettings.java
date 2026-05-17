@@ -605,6 +605,14 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
 
             final String fetchedXml = xml;
             final String errorMsg = error;
+            
+            JSONObject tempRevocationJson = null;
+            try {
+                tempRevocationJson = fetchRevocationJson();
+            } catch (Exception ignored) {
+            }
+            final JSONObject revocationJson = tempRevocationJson;
+
             mHandler.post(() -> {
                 if (!silent) {
                     updateFetchButtonState(true);
@@ -628,7 +636,6 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
                     }
 
                     List<String> fetchedSerials = extractCertSerials(fetchedXml);
-                    JSONObject revocationJson = fetchRevocationJson();
                     JSONObject entries = revocationJson == null ? null : revocationJson.optJSONObject("entries");
                     if (entries != null && !fetchedSerials.isEmpty()) {
                         boolean fetchedRevoked = false;

@@ -13,34 +13,35 @@
         android:key="aospa_lab_play_integrity_category"
         android:title="@string/aospa_lab_category_play_integrity">
 
-        <co.aospa.framework.preference.SystemPropertySwitchPreference
+        <com.android.settingslib.widget.MainSwitchPreference
             android:key="persist.sys.pihooks.pi"
-            android:title="@string/pi_spoof_title"
-            android:summary="@string/pi_spoof_summary"
-            android:defaultValue="true" />
+            android:title="@string/pi_spoof_title" />
 
         <com.android.settings.applications.PifDataPreference
             android:key="pif_data_setting"
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/pif_data_title"/>
 
-        <Preference
+        <com.android.settings.widget.HomepagePreference
             android:key="pif_props"
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/pif_props_title"
-            android:summary="@string/pif_props_summary"/>
+            android:summary="@string/pif_props_summary"
+            android:icon="@drawable/ic_settings_about_device"/>
 
-        <Preference
+        <com.android.settings.widget.HomepagePreference
             android:key="pif_update"
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/pif_update_title"
-            android:summary="@string/pif_update_summary"/>
+            android:summary="@string/pif_update_summary"
+            android:icon="@drawable/ic_settings_system_dashboard_white"/>
 
-        <Preference
+        <com.android.settings.widget.HomepagePreference
             android:key="update_pif_auto_random"
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/update_pif_auto_random_title"
-            android:summary="@string/update_pif_auto_random_summary" />
+            android:summary="@string/update_pif_auto_random_summary"
+            android:icon="@drawable/ic_settings_security_white" />
 
     </PreferenceCategory>
 
@@ -48,17 +49,11 @@
         android:key="aospa_lab_attestation_category"
         android:title="@string/aospa_lab_category_attestation">
 
-        <co.aospa.framework.preference.SystemPropertySwitchPreference
-            android:key="persist.sys.trickystore.enabled"
-            android:title="@string/trickystore_title"
-            android:summary="@string/trickystore_summary"
-            android:defaultValue="false" />
-
-        <Preference
+        <com.android.settings.widget.HomepagePreference
             android:key="trickystore_settings"
-            android:dependency="persist.sys.trickystore.enabled"
             android:title="@string/trickystore_settings_title"
             android:summary="@string/summary_placeholder"
+            android:icon="@drawable/ic_settings_privacy"
             android:fragment="co.aospa.settings.aospalab.TrickyStoreSettings" />
 
         <co.aospa.framework.preference.SystemPropertySwitchPreference
@@ -96,10 +91,11 @@
             android:summary="@string/miscellaneous_pairip_activity_block_summary"
             android:defaultValue="false" />
 
-        <Preference
+        <com.android.settings.widget.HomepagePreference
             android:key="hide_applist_setting"
             android:title="@string/hide_applist_title"
             android:summary="@string/summary_placeholder"
+            android:icon="@drawable/ic_apps"
             settings:controller="com.android.settings.applications.HideAppListController"
             android:fragment="com.android.settings.applications.HideAppListSettings" />
     </PreferenceCategory>

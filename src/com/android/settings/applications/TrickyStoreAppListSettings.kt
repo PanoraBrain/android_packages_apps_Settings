@@ -24,25 +24,31 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.settings.R
 import com.google.android.material.appbar.AppBarLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
 
     private lateinit var packageManager: PackageManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: AppListAdapter
-    private var packageList: List<PackageInfo> = emptyList()
+
+    private var allApps: List<AppInfo> = emptyList()
+    private var targetMap: MutableMap<String, TargetMode> = mutableMapOf()
 
     private var appBarLayout: AppBarLayout? = null
     private var searchText = ""
     private var showSystem = false
     private var optionsMenu: Menu? = null
-    private var targetMap: MutableMap<String, TargetMode> = mutableMapOf()
+    private var isLoaded = false
 
     override fun onStart() {
         super.onStart()
@@ -57,11 +63,7 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
         activity?.setTitle(R.string.ts_manage_target_apps)
         appBarLayout = activity?.findViewById(R.id.app_bar)
         packageManager = requireContext().packageManager
-        packageList = try {
-            packageManager.getInstalledPackages(PackageManager.MATCH_ANY_USER)
-        } catch (e: Exception) {
-            emptyList()
-        }
+        targetMap = loadTargetMap()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,8 +71,52 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
         recyclerView = view.findViewById<RecyclerView>(R.id.user_list_view).also {
             it.layoutManager = LinearLayoutManager(context)
             it.adapter = adapter
+            it.itemAnimator = null // Prevent flashing during DiffUtil updates
         }
-        refreshList()
+        
+        loadAppsInBackground()
+    }
+
+    private fun loadAppsInBackground() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val packages = try {
+                packageManager.getInstalledPackages(PackageManager.MATCH_ANY_USER)
+            } catch (e: Exception) {
+                emptyList()
+            }
+            
+            val hiddenApps = try {
+                resources.getStringArray(R.array.trickystore_hidden_apps).toSet()
+            } catch (e: Exception) {
+                emptySet()
+            }
+            
+            val apps = mutableListOf<AppInfo>()
+            for (info in packages) {
+                if (info.applicationInfo == null) continue
+                if (hiddenApps.contains(info.packageName)) continue
+                
+                val isSystem = info.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM != 0
+                val isExcluded = EXCLUDED_SUFFIXES.any { info.packageName.contains(it) }
+                
+                if (isSystem && isExcluded) continue
+                
+                val label = info.applicationInfo!!.loadLabel(packageManager).toString()
+                
+                apps.add(AppInfo(
+                    packageName = info.packageName,
+                    label = label,
+                    isSystem = isSystem,
+                    applicationInfo = info.applicationInfo!!
+                ))
+            }
+            
+            allApps = apps
+            withContext(Dispatchers.Main) {
+                isLoaded = true
+                refreshList()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -117,8 +163,8 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
                 refreshList()
             }
             R.id.select_all -> {
-                adapter.currentList.forEach { app ->
-                    targetMap[app.packageName] = app.targetMode
+                adapter.currentList.forEach { listItem ->
+                    targetMap[listItem.info.packageName] = listItem.targetMode
                 }
                 saveTargets()
                 refreshList()
@@ -181,7 +227,8 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
         )
     }
 
-    private fun showModeDialog(app: AppInfo) {
+    private fun showModeDialog(item: AppListItem) {
+        val app = item.info
         val options = mutableListOf<TargetOption>()
         options.add(TargetOption(TargetMode.AUTO, getString(R.string.ts_mode_auto)))
         options.add(TargetOption(TargetMode.LEAF_HACK, getString(R.string.ts_mode_leaf_hack)))
@@ -206,86 +253,80 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
     }
 
     private fun refreshList() {
-        targetMap = loadTargetMap()
-        val hiddenApps = resources.getStringArray(R.array.trickystore_hidden_apps).toSet()
-        val list = packageList
-            .filter { it.applicationInfo != null }
-            .filter { !hiddenApps.contains(it.packageName) }
-            .filter { info ->
-                val isSystem = info.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM != 0
-                val isExcluded = EXCLUDED_SUFFIXES.any { info.packageName.contains(it) }
-                if (isSystem && isExcluded) return@filter false
-                if (isSystem && !showSystem && !targetMap.containsKey(info.packageName)) {
-                    return@filter false
-                }
+        if (!isLoaded) return
+        
+        lifecycleScope.launch(Dispatchers.Default) {
+            val list = allApps.filter { app ->
+                val inTarget = targetMap.containsKey(app.packageName)
+                if (app.isSystem && !showSystem && !inTarget) return@filter false
+                if (searchText.isNotEmpty() && !app.label.contains(searchText, true)) return@filter false
                 true
-            }
-            .filter { getLabel(it).contains(searchText, true) }
-            .sortedWith(compareBy<PackageInfo> {
-                !targetMap.containsKey(it.packageName)
-            }.thenBy {
-                getLabel(it).lowercase()
-            })
+            }.map { app ->
+                AppListItem(
+                    info = app,
+                    targetMode = targetMap[app.packageName] ?: TargetMode.AUTO,
+                    isInTarget = targetMap.containsKey(app.packageName)
+                )
+            }.sortedWith(compareBy<AppListItem> { !it.isInTarget }.thenBy { it.info.label.lowercase() })
 
-        if (::adapter.isInitialized) {
-            adapter.submitList(list.map { appInfoFromPackageInfo(it) })
+            withContext(Dispatchers.Main) {
+                adapter.submitList(list)
+            }
         }
     }
-
-    private fun appInfoFromPackageInfo(packageInfo: PackageInfo) =
-        AppInfo(
-            packageInfo.packageName,
-            getLabel(packageInfo),
-            packageInfo.applicationInfo!!.loadIcon(packageManager),
-            targetMap[packageInfo.packageName] ?: TargetMode.AUTO,
-            targetMap.containsKey(packageInfo.packageName),
-        )
-
-    private fun getLabel(packageInfo: PackageInfo) =
-        packageInfo.applicationInfo!!.loadLabel(packageManager).toString()
 
     private fun getModeLabel(mode: TargetMode): String {
         return getString(mode.labelRes)
     }
 
-    private inner class AppListAdapter : ListAdapter<AppInfo, AppListViewHolder>(itemCallback) {
+    private inner class AppListAdapter : ListAdapter<AppListItem, AppListViewHolder>(itemCallback) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             AppListViewHolder(
                 layoutInflater.inflate(R.layout.hide_applist_list_item, parent, false)
             )
 
         override fun onBindViewHolder(holder: AppListViewHolder, position: Int) {
-            getItem(position).let { app ->
-                holder.label?.text = app.label
-                holder.icon?.setImageDrawable(app.icon)
-                
-                holder.checkBox?.setOnCheckedChangeListener(null)
-                holder.checkBox?.isChecked = app.isInTarget
-                
-                holder.checkBox?.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        targetMap[app.packageName] = app.targetMode
-                    } else {
-                        targetMap.remove(app.packageName)
-                    }
-                    saveTargets()
-                    // Use post to avoid IllegalStateException during layout phase
-                    holder.itemView.post { refreshList() }
-                }
-
-                holder.itemView?.setOnClickListener { 
-                    if (app.isInTarget) {
-                        showModeDialog(app)
-                    } else {
-                        holder.checkBox?.isChecked = true
+            val item = getItem(position)
+            val app = item.info
+            
+            holder.label?.text = app.label
+            
+            // Lazy load icon
+            lifecycleScope.launch(Dispatchers.IO) {
+                val icon = app.applicationInfo.loadIcon(packageManager)
+                withContext(Dispatchers.Main) {
+                    // Make sure we are still binding the same package
+                    if (holder.packageName?.text == item.info.packageName || holder.packageName?.text?.startsWith(item.info.packageName + " - ") == true) {
+                        holder.icon?.setImageDrawable(icon)
                     }
                 }
-                
-                holder.packageName?.text = if (app.isInTarget) {
-                    app.packageName + " - " + getModeLabel(app.targetMode)
+            }
+            
+            holder.checkBox?.setOnCheckedChangeListener(null)
+            holder.checkBox?.isChecked = item.isInTarget
+            
+            holder.checkBox?.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    targetMap[app.packageName] = item.targetMode
                 } else {
-                    app.packageName
+                    targetMap.remove(app.packageName)
                 }
+                saveTargets()
+                refreshList()
+            }
+
+            holder.itemView.setOnClickListener { 
+                if (item.isInTarget) {
+                    showModeDialog(item)
+                } else {
+                    holder.checkBox?.isChecked = true
+                }
+            }
+            
+            holder.packageName?.text = if (item.isInTarget) {
+                app.packageName + " - " + getModeLabel(item.targetMode)
+            } else {
+                app.packageName
             }
         }
     }
@@ -297,12 +338,17 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
         val checkBox: CheckBox? = itemView.findViewById(R.id.check_box)
     }
 
-    private data class AppInfo(
+    private class AppInfo(
         val packageName: String,
         val label: String,
-        val icon: Drawable,
+        val isSystem: Boolean,
+        val applicationInfo: ApplicationInfo
+    )
+    
+    private data class AppListItem(
+        val info: AppInfo,
         val targetMode: TargetMode,
-        val isInTarget: Boolean,
+        val isInTarget: Boolean
     )
 
     private data class TargetOption(val mode: TargetMode?, val label: String)
@@ -328,12 +374,12 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
             ".systemui.plugin", ".theme", ".iconpack",
         )
 
-        private val itemCallback = object : DiffUtil.ItemCallback<AppInfo>() {
-            override fun areItemsTheSame(oldInfo: AppInfo, newInfo: AppInfo) =
-                oldInfo.packageName == newInfo.packageName
+        private val itemCallback = object : DiffUtil.ItemCallback<AppListItem>() {
+            override fun areItemsTheSame(oldItem: AppListItem, newItem: AppListItem) =
+                oldItem.info.packageName == newItem.info.packageName
 
-            override fun areContentsTheSame(oldInfo: AppInfo, newInfo: AppInfo) =
-                oldInfo == newInfo
+            override fun areContentsTheSame(oldItem: AppListItem, newItem: AppListItem) =
+                oldItem.targetMode == newItem.targetMode && oldItem.isInTarget == newItem.isInTarget
         }
     }
 }

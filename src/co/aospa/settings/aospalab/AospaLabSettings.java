@@ -26,6 +26,7 @@ import com.android.settings.applications.SpoofingUtils;
 import com.android.settings.dashboard.DashboardFragment;
 import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settingslib.search.SearchIndexable;
+import com.android.settingslib.widget.MainSwitchPreference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,11 +102,12 @@ public class AospaLabSettings extends DashboardFragment {
             mPifDataPreference.setFilePickerLauncher(mPifFilePickerLauncher);
         }
 
-        Preference spoofPi = findPreference(SYS_SPOOF_PI);
+        MainSwitchPreference spoofPi = findPreference(SYS_SPOOF_PI);
         if (spoofPi != null) {
-            spoofPi.setOnPreferenceChangeListener((preference, newValue) -> {
+            spoofPi.updateStatus(SystemProperties.getBoolean(SYS_SPOOF_PI, true));
+            spoofPi.addOnSwitchChangeListener((switchView, isChecked) -> {
+                SystemProperties.set(SYS_SPOOF_PI, isChecked ? "true" : "false");
                 killTargetPackages(true);
-                return true;
             });
         }
 
@@ -117,17 +119,7 @@ public class AospaLabSettings extends DashboardFragment {
             });
         }
 
-        Preference trickystore = findPreference(SYS_TRICKYSTORE_ENABLED);
-        if (trickystore != null) {
-            trickystore.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean enabled = newValue instanceof Boolean && (Boolean) newValue;
-                Settings.System.putInt(
-                        getContext().getContentResolver(),
-                        SETTING_TRICKYSTORE_ENABLED,
-                        enabled ? 1 : 0);
-                return true;
-            });
-        }
+        // TrickyStore master switch removed from Aospa Lab screen
 
         Preference pifProps = findPreference(PIF_PROPS_KEY);
         if (pifProps != null) {
