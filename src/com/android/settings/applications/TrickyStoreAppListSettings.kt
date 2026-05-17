@@ -212,7 +212,7 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
             .filter { it.applicationInfo != null }
             .filter { !hiddenApps.contains(it.packageName) }
             .filter { info ->
-                val isSystem = info.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+                val isSystem = info.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM != 0
                 val isExcluded = EXCLUDED_SUFFIXES.any { info.packageName.contains(it) }
                 if (isSystem && isExcluded) return@filter false
                 if (isSystem && !showSystem && !targetMap.containsKey(info.packageName)) {
@@ -236,13 +236,13 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
         AppInfo(
             packageInfo.packageName,
             getLabel(packageInfo),
-            packageInfo.applicationInfo.loadIcon(packageManager),
+            packageInfo.applicationInfo!!.loadIcon(packageManager),
             targetMap[packageInfo.packageName] ?: TargetMode.AUTO,
             targetMap.containsKey(packageInfo.packageName),
         )
 
     private fun getLabel(packageInfo: PackageInfo) =
-        packageInfo.applicationInfo.loadLabel(packageManager).toString()
+        packageInfo.applicationInfo!!.loadLabel(packageManager).toString()
 
     private fun getModeLabel(mode: TargetMode): String {
         return getString(mode.labelRes)
