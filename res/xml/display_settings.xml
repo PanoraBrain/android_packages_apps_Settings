@@ -17,6 +17,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:settings="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res/com.android.settings"
     android:key="display_settings_screen"
     android:title="@string/display_settings"
     settings:keywords="@string/keywords_display">
@@ -196,6 +197,28 @@
             settings:controller="co.aospa.settings.display.RefreshRatePreferenceController"/>
 
         <SwitchPreferenceCompat
+            android:key="hdr_display"
+            android:title="@string/hdr_display_title"
+            android:summary="@string/hdr_display_summary"
+            settings:controller="com.android.settings.display.HdrDisplayPreferenceController"/>
+            
+        <co.aospa.framework.preference.SecureSettingSeekBarPreference
+            android:key="hdr_max_brightness_percent"
+            android:title="@string/hdr_max_brightness_percent_title"
+            android:max="100"
+            app:min="10"
+            android:defaultValue="100"
+            android:dependency="hdr_display"
+            settings:controller="com.android.settings.display.HdrDisplayBrightnessPreferenceController"
+            settings:interval="1"/>
+
+        <SwitchPreferenceCompat
+            android:key="touch_polling"
+            android:title="@string/touch_polling_title"
+            android:summary="@string/touch_polling_summary"
+            settings:controller="com.android.settings.display.TouchPollingPreferenceController" />
+
+        <SwitchPreferenceCompat
             android:key="show_operator_name"
             android:title="@string/show_operator_name_title"
             android:summary="@string/show_operator_name_summary"/>
@@ -215,6 +238,13 @@
         <SwitchPreferenceCompat
             android:key="lift_to_wake"
             android:title="@string/lift_to_wake_title"/>
+
+        <Preference
+            android:key="display_cutout_force_fullscreen_settings"
+            android:title="@string/display_cutout_force_fullscreen_title"
+            android:summary="@string/display_cutout_force_fullscreen_summary"
+            android:fragment="com.android.settings.display.DisplayCutoutForceFullscreenSettings"
+            settings:controller="co.android.settings.display.DisplayCutoutForceFullscreenPreferenceController" />
 
         <ListPreference
             android:key="theme"

@@ -171,4 +171,38 @@
     <string name="three_finger_gesture">Swipe to screenshot</string>
     <string name="three_finger_gesture_summary">Swipe down with three fingers to take a screenshot</string>
 
+    <!-- Display settings screen, increased touch polling rate settings title -->
+    <string name="touch_polling_title">High touch polling rate</string>
+    <!-- Display settings screen, increased touch polling rate settings summary -->
+    <string name="touch_polling_summary">Increase touchscreen polling rate to decrease touch latency</string>
+
+    <!-- HDR Display -->
+    <string name="hdr_display_title">HDR Display</string>
+    <string name="hdr_display_summary">Enable peak brightness for HDR content. This will increase battery usage</string>
+    <string name="hdr_max_brightness_percent_title">HDR Display intensity</string>
+
+    <!-- Global Actions -->
+    <string name="global_actions_advanced_reboot_title">Enable advanced restart</string>
+    <string name="global_actions_advanced_reboot_summary">Show options for other bootable components in power menu</string>
+
+    <!-- Private DNS -->
+    <string name="private_dns_mode_cloudflare" translatable="false">Cloudflare DNS</string>
+    <!-- Alternative: 1dot1dot1dot1.cloudflare-dns.com -->
+    <string name="private_dns_hostname_cloudflare" translatable="false">one.one.one.one</string>
+    <!-- AdGuard DNS Option -->
+    <string name="private_dns_mode_adguard" translatable="false">AdGuard DNS</string>
+    <!-- AdGuard DNS hostname -->
+    <string name="private_dns_hostname_adguard" translatable="false">dns.adguard.com</string>
+    <!-- Open DNS Option -->
+    <string name="private_dns_mode_open_dns" translatable="false">Open DNS</string>
+    <!-- Open DNS hostname -->
+    <string name="private_dns_hostname_open_dns" translatable="false">dns.opendns.com</string>
+    <!-- Cleanbrowsing DNS Option -->
+    <string name="private_dns_mode_cleanbrowsing" translatable="false">Cleanbrowsing DNS</string>
+    <!-- Cleanbrowsing DNS hostname -->
+    <string name="private_dns_hostname_cleanbrowsing" translatable="false">security-filter-dns.cleanbrowsing.org</string>
+    <!-- Quad9 DNS Option -->
+    <string name="private_dns_mode_quad9" translatable="false">Quad9 DNS</string>
+    <!-- Quad9 DNS hostname -->
+    <string name="private_dns_hostname_quad9" translatable="false">dns.quad9.net</string>
 </resources>
