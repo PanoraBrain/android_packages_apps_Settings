@@ -24,24 +24,6 @@
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/pif_data_title"/>
 
-        <com.android.settings.applications.KeyboxDataPreference
-            android:key="keybox_data_setting"
-            android:dependency="persist.sys.pihooks.pi"
-            android:title="@string/keybox_data_title"/>
-
-        <co.aospa.framework.preference.SystemPropertySwitchPreference
-            android:key="persist.sys.trickystore.enabled"
-            android:title="@string/trickystore_title"
-            android:summary="@string/trickystore_summary"
-            android:defaultValue="false" />
-
-        <Preference
-            android:key="trickystore_settings"
-            android:dependency="persist.sys.trickystore.enabled"
-            android:title="@string/trickystore_settings_title"
-            android:summary="@string/summary_placeholder"
-            android:fragment="co.aospa.settings.aospalab.TrickyStoreSettings" />
-
         <Preference
             android:key="pif_props"
             android:dependency="persist.sys.pihooks.pi"
@@ -60,12 +42,31 @@
             android:title="@string/update_pif_auto_random_title"
             android:summary="@string/update_pif_auto_random_summary" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="aospa_lab_attestation_category"
+        android:title="@string/aospa_lab_category_attestation">
+
+        <co.aospa.framework.preference.SystemPropertySwitchPreference
+            android:key="persist.sys.trickystore.enabled"
+            android:title="@string/trickystore_title"
+            android:summary="@string/trickystore_summary"
+            android:defaultValue="false" />
+
+        <Preference
+            android:key="trickystore_settings"
+            android:dependency="persist.sys.trickystore.enabled"
+            android:title="@string/trickystore_settings_title"
+            android:summary="@string/summary_placeholder"
+            android:fragment="co.aospa.settings.aospalab.TrickyStoreSettings" />
+
         <co.aospa.framework.preference.SystemPropertySwitchPreference
             android:key="persist.sys.vbmeta.update"
-            android:dependency="persist.sys.pihooks.pi"
             android:title="@string/vbmeta_attestation_title"
             android:summary="@string/vbmeta_attestation_summary"
             android:defaultValue="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -22,4 +22,12 @@
         android:id="@+id/hide_system"
         android:title="@string/menu_hide_system"
         android:showAsAction="never" />
+    <item
+        android:id="@+id/select_all"
+        android:title="@string/action_select_all"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/reset_apps"
+        android:title="@string/action_reset"
+        android:showAsAction="never" />
 </menu>

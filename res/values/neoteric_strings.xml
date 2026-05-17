@@ -5,16 +5,6 @@
 -->
 <resources>
 
-    <!-- Keybox Data -->
-    <string name="keybox_data_title">Keybox attestation override</string>
-    <string name="keybox_data_summary">Load a custom keybox XML to override device key attestation</string>
-    <string name="keybox_data_loaded_summary">Loaded %1$s keybox with %2$d certificates (%3$s)</string>
-    <string name="keybox_delete_content_description">Clear keybox data</string>
-    <string name="keybox_toast_invalid_file_selected">Not an XML file. Choose a valid keybox XML.</string>
-    <string name="keybox_toast_missing_data">Invalid keybox XML: required fields missing</string>
-    <string name="keybox_toast_file_loaded">Keybox loaded</string>
-    <string name="keybox_toast_file_cleared">Keybox cleared</string>
-
     <!-- Pif Data -->
     <string name="pif_data_title">Select PIF JSON to spoof</string>
     <string name="pif_data_summary">Select PIF JSON used for prop attestation spoofing for google mobile services and play store. Click the delete button in order to reset the PIF data props and use dynamic PIF props which are used by default.</string>
@@ -34,6 +24,7 @@
     <string name="aospa_lab_title">Aospa LAB</string>
     <string name="aospa_lab_summary">Spoofing and app tweaks</string>
     <string name="aospa_lab_category_play_integrity">Play Integrity</string>
+    <string name="aospa_lab_category_attestation">Attestation</string>
     <string name="aospa_lab_category_spoofing">Spoofing</string>
     <string name="aospa_lab_category_misc">Misc</string>
 
@@ -143,6 +134,8 @@
     <!-- Hide applist -->
     <string name="search">Search</string>
     <string name="search_apps">Search apps</string>
+    <string name="action_select_all">Select all</string>
+    <string name="action_reset">Reset</string>
     <string name="hide_applist_title">Hide apps</string>
     <string name="hide_applist_summary">{count, plural,
       =1      {# app hidden}

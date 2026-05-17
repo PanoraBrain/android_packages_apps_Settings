@@ -116,15 +116,15 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
         mVerificationMode = findPreference(KEY_VERIFICATION_MODE);
         mSecurityPatch = findPreference(KEY_SECURITY_PATCH);
 
-        Preference masterSwitch = findPreference(KEY_MASTER_SWITCH);
+        com.android.settingslib.widget.MainSwitchPreference masterSwitch = findPreference(KEY_MASTER_SWITCH);
         if (masterSwitch != null) {
-            masterSwitch.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean enabled = newValue instanceof Boolean && (Boolean) newValue;
+            masterSwitch.updateStatus(SystemProperties.getBoolean(KEY_MASTER_SWITCH, false));
+            masterSwitch.addOnSwitchChangeListener((switchView, isChecked) -> {
+                SystemProperties.set(KEY_MASTER_SWITCH, isChecked ? "true" : "false");
                 Settings.System.putInt(
                         requireContext().getContentResolver(),
                         TRICKYSTORE_ENABLED_KEY,
-                        enabled ? 1 : 0);
-                return true;
+                        isChecked ? 1 : 0);
             });
         }
 
@@ -181,14 +181,10 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
         }
 
         if (mFetchKeybox != null) {
-            if (isOfficialBuild()) {
-                mFetchKeybox.setOnPreferenceClickListener(pref -> {
-                    fetchOfficialKeybox(false);
-                    return true;
-                });
-            } else {
-                mFetchKeybox.setVisible(false);
-            }
+            mFetchKeybox.setOnPreferenceClickListener(pref -> {
+                fetchOfficialKeybox(false);
+                return true;
+            });
         }
 
         if (mRevocationStatus != null) {
@@ -363,7 +359,7 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
     }
 
     private void updateFetchButtonState(boolean keyboxExists) {
-        if (mFetchKeybox == null || !isOfficialBuild()) return;
+        if (mFetchKeybox == null) return;
 
         boolean isValid = mCurrentRevocationStatus == RevocationStatus.VALID
                 || mCurrentRevocationStatus == RevocationStatus.SOFT_BANNED;
@@ -437,9 +433,7 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
                 if (entry == null) continue;
                 String status = entry.optString("status", "").toUpperCase(Locale.US);
                 if ("REVOKED".equals(status)) {
-                    if (isOfficialBuild()) {
-                        mHandler.post(() -> fetchOfficialKeybox(true));
-                    }
+                    mHandler.post(() -> fetchOfficialKeybox(true));
                     return RevocationStatus.REVOKED;
                 }
                 if ("SUSPENDED".equals(status)) {
@@ -449,9 +443,7 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
         }
 
         if (isKeyboxSoftBanned(serials)) {
-            if (isOfficialBuild()) {
-                mHandler.post(() -> fetchOfficialKeybox(true));
-            }
+            mHandler.post(() -> fetchOfficialKeybox(true));
             return RevocationStatus.SOFT_BANNED;
         }
 
@@ -576,7 +568,6 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
     }
 
     private void autoFetchIfNoKeybox() {
-        if (!isOfficialBuild()) return;
         if (!isTrickyStoreEnabled()) return;
         if (mIsKeyboxPickerOpen) return;
         String existing = getSecureString(KEYBOX_KEY);
@@ -585,7 +576,6 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
     }
 
     private void fetchOfficialKeybox(boolean silent) {
-        if (!isOfficialBuild()) return;
         if (mFetchKeybox != null && !silent) {
             mFetchKeybox.setEnabled(false);
             mFetchKeybox.setSummary(getString(R.string.ts_fetch_keybox_fetching));
@@ -805,12 +795,7 @@ public class TrickyStoreSettings extends SettingsPreferenceFragment {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    private boolean isOfficialBuild() {
-        String aospaType = SystemProperties.get("ro.aospa.build.type", "");
-        String evoType = SystemProperties.get("ro.evolution.build.type", "");
-        String type = !TextUtils.isEmpty(aospaType) ? aospaType : evoType;
-        return "Official".equalsIgnoreCase(type);
-    }
+
 
     private boolean isTrickyStoreEnabled() {
         boolean propertyEnabled = SystemProperties.getBoolean(KEY_MASTER_SWITCH, false);

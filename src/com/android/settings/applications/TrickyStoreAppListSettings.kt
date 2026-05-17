@@ -116,6 +116,21 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
                 showSystem = !showSystem
                 refreshList()
             }
+            R.id.select_all -> {
+                adapter.currentList.forEach { app ->
+                    targetMap[app.packageName] = app.targetMode
+                }
+                saveTargets()
+                refreshList()
+            }
+            R.id.reset_apps -> {
+                targetMap.clear()
+                DEFAULT_TARGETS.forEach { pkg ->
+                    targetMap[pkg] = TargetMode.AUTO
+                }
+                saveTargets()
+                refreshList()
+            }
         }
         updateOptionsMenu()
         return true
@@ -131,8 +146,8 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
 
     private fun updateOptionsMenu() {
         val menu = optionsMenu ?: return
-        menu.findItem(R.id.show_system).setVisible(!showSystem)
-        menu.findItem(R.id.hide_system).setVisible(showSystem)
+        menu.findItem(R.id.show_system)?.isVisible = !showSystem
+        menu.findItem(R.id.hide_system)?.isVisible = showSystem
     }
 
     private fun loadTargetMap(): MutableMap<String, TargetMode> {
@@ -171,9 +186,7 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
         options.add(TargetOption(TargetMode.AUTO, getString(R.string.ts_mode_auto)))
         options.add(TargetOption(TargetMode.LEAF_HACK, getString(R.string.ts_mode_leaf_hack)))
         options.add(TargetOption(TargetMode.CERT_GEN, getString(R.string.ts_mode_cert_gen)))
-        if (app.isInTarget) {
-            options.add(TargetOption(null, getString(R.string.ts_mode_remove)))
-        }
+        options.add(TargetOption(null, getString(R.string.ts_mode_remove)))
 
         val labels = options.map { it.label }.toTypedArray()
         AlertDialog.Builder(requireContext())
@@ -195,18 +208,24 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
     private fun refreshList() {
         targetMap = loadTargetMap()
         val hiddenApps = resources.getStringArray(R.array.trickystore_hidden_apps).toSet()
-        var list = packageList
+        val list = packageList
             .filter { it.applicationInfo != null }
             .filter { !hiddenApps.contains(it.packageName) }
             .filter { info ->
                 val isSystem = info.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+                val isExcluded = EXCLUDED_SUFFIXES.any { info.packageName.contains(it) }
+                if (isSystem && isExcluded) return@filter false
                 if (isSystem && !showSystem && !targetMap.containsKey(info.packageName)) {
                     return@filter false
                 }
                 true
             }
             .filter { getLabel(it).contains(searchText, true) }
-            .sortedWith { a, b -> getLabel(a).compareTo(getLabel(b)) }
+            .sortedWith(compareBy<PackageInfo> {
+                !targetMap.containsKey(it.packageName)
+            }.thenBy {
+                getLabel(it).lowercase()
+            })
 
         if (::adapter.isInitialized) {
             adapter.submitList(list.map { appInfoFromPackageInfo(it) })
@@ -239,8 +258,29 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
             getItem(position).let { app ->
                 holder.label?.text = app.label
                 holder.icon?.setImageDrawable(app.icon)
-                holder.itemView?.setOnClickListener { showModeDialog(app) }
+                
+                holder.checkBox?.setOnCheckedChangeListener(null)
                 holder.checkBox?.isChecked = app.isInTarget
+                
+                holder.checkBox?.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        targetMap[app.packageName] = app.targetMode
+                    } else {
+                        targetMap.remove(app.packageName)
+                    }
+                    saveTargets()
+                    // Use post to avoid IllegalStateException during layout phase
+                    holder.itemView.post { refreshList() }
+                }
+
+                holder.itemView?.setOnClickListener { 
+                    if (app.isInTarget) {
+                        showModeDialog(app)
+                    } else {
+                        holder.checkBox?.isChecked = true
+                    }
+                }
+                
                 holder.packageName?.text = if (app.isInTarget) {
                     app.packageName + " - " + getModeLabel(app.targetMode)
                 } else {
@@ -275,6 +315,18 @@ class TrickyStoreAppListSettings : Fragment(R.layout.hide_applist_layout) {
 
     companion object {
         const val SETTINGS_TARGETS = "spoof_trickystore_target"
+
+        val DEFAULT_TARGETS = setOf(
+            "com.google.android.gms",
+            "com.android.vending",
+        )
+
+        val EXCLUDED_SUFFIXES = listOf(
+            ".auto_generated", ".appsearch", ".backup", ".carrier",
+            ".cellbroadcast", ".cts", ".federated", ".ims", ".overlay",
+            ".qti", ".qualcomm", ".resources", ".systemui.clocks",
+            ".systemui.plugin", ".theme", ".iconpack",
+        )
 
         private val itemCallback = object : DiffUtil.ItemCallback<AppInfo>() {
             override fun areItemsTheSame(oldInfo: AppInfo, newInfo: AppInfo) =

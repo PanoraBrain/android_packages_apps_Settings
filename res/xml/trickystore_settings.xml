@@ -7,7 +7,7 @@
     xmlns:settings="http://schemas.android.com/apk/res-auto"
     android:title="@string/trickystore_title">
 
-    <co.aospa.framework.preference.SystemPropertySwitchPreference
+    <com.android.settingslib.widget.MainSwitchPreference
         android:key="persist.sys.trickystore.enabled"
         android:title="@string/ts_master_switch_title"
         android:defaultValue="false" />

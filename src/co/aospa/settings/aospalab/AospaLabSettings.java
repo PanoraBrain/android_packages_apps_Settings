@@ -20,7 +20,7 @@ import androidx.preference.Preference;
 
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.settings.R;
-import com.android.settings.applications.KeyboxDataPreference;
+
 import com.android.settings.applications.PifDataPreference;
 import com.android.settings.applications.SpoofingUtils;
 import com.android.settings.dashboard.DashboardFragment;
@@ -40,7 +40,7 @@ import java.util.Map;
 public class AospaLabSettings extends DashboardFragment {
 
     private static final String TAG = "AospaLabSettings";
-    private static final String KEYBOX_DATA_KEY = "keybox_data_setting";
+
     private static final String PIF_DATA_KEY = "pif_data_setting";
     private static final String PIF_PROPS_KEY = "pif_props";
     private static final String PIF_UPDATE_KEY = "pif_update";
@@ -51,9 +51,9 @@ public class AospaLabSettings extends DashboardFragment {
     private static final String SYS_TRICKYSTORE_ENABLED = "persist.sys.trickystore.enabled";
     private static final String SETTING_TRICKYSTORE_ENABLED = "spoof_trickystore_enabled";
 
-    private ActivityResultLauncher<Intent> mKeyboxFilePickerLauncher;
+
     private ActivityResultLauncher<Intent> mPifFilePickerLauncher;
-    private KeyboxDataPreference mKeyboxDataPreference;
+
     private PifDataPreference mPifDataPreference;
     private Preference mRandomPropertiesButton;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -77,18 +77,6 @@ public class AospaLabSettings extends DashboardFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        mKeyboxFilePickerLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Preference pref = findPreference(KEYBOX_DATA_KEY);
-                        if (pref instanceof KeyboxDataPreference) {
-                            ((KeyboxDataPreference) pref).handleFileSelected(result.getData().getData());
-                        }
-                    }
-                }
-        );
-
         mPifFilePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -106,12 +94,8 @@ public class AospaLabSettings extends DashboardFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mKeyboxDataPreference = findPreference(KEYBOX_DATA_KEY);
-        mPifDataPreference = findPreference(PIF_DATA_KEY);
 
-        if (mKeyboxDataPreference != null) {
-            mKeyboxDataPreference.setFilePickerLauncher(mKeyboxFilePickerLauncher);
-        }
+        mPifDataPreference = findPreference(PIF_DATA_KEY);
 
         if (mPifDataPreference != null) {
             mPifDataPreference.setFilePickerLauncher(mPifFilePickerLauncher);
