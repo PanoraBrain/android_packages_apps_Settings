@@ -104,7 +104,7 @@ public class AospaLabSettings extends DashboardFragment {
 
         MainSwitchPreference spoofPi = findPreference(SYS_SPOOF_PI);
         if (spoofPi != null) {
-            spoofPi.updateStatus(SystemProperties.getBoolean(SYS_SPOOF_PI, true));
+            spoofPi.setChecked(SystemProperties.getBoolean(SYS_SPOOF_PI, true));
             spoofPi.addOnSwitchChangeListener((switchView, isChecked) -> {
                 SystemProperties.set(SYS_SPOOF_PI, isChecked ? "true" : "false");
                 killTargetPackages(true);

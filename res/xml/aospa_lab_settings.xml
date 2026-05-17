@@ -22,26 +22,23 @@
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/pif_data_title"/>
 
-        <com.android.settings.widget.HomepagePreference
+        <Preference
             android:key="pif_props"
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/pif_props_title"
-            android:summary="@string/pif_props_summary"
-            android:icon="@drawable/ic_settings_about_device"/>
+            android:summary="@string/pif_props_summary" />
 
-        <com.android.settings.widget.HomepagePreference
+        <Preference
             android:key="pif_update"
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/pif_update_title"
-            android:summary="@string/pif_update_summary"
-            android:icon="@drawable/ic_settings_system_dashboard_white"/>
+            android:summary="@string/pif_update_summary" />
 
-        <com.android.settings.widget.HomepagePreference
+        <Preference
             android:key="update_pif_auto_random"
             android:dependency="persist.sys.pihooks.pi"
             android:title="@string/update_pif_auto_random_title"
-            android:summary="@string/update_pif_auto_random_summary"
-            android:icon="@drawable/ic_settings_security_white" />
+            android:summary="@string/update_pif_auto_random_summary" />
 
     </PreferenceCategory>
 
@@ -49,11 +46,10 @@
         android:key="aospa_lab_attestation_category"
         android:title="@string/aospa_lab_category_attestation">
 
-        <com.android.settings.widget.HomepagePreference
+        <Preference
             android:key="trickystore_settings"
             android:title="@string/trickystore_settings_title"
             android:summary="@string/summary_placeholder"
-            android:icon="@drawable/ic_settings_privacy"
             android:fragment="co.aospa.settings.aospalab.TrickyStoreSettings" />
 
         <co.aospa.framework.preference.SystemPropertySwitchPreference
@@ -91,11 +87,10 @@
             android:summary="@string/miscellaneous_pairip_activity_block_summary"
             android:defaultValue="false" />
 
-        <com.android.settings.widget.HomepagePreference
+        <Preference
             android:key="hide_applist_setting"
             android:title="@string/hide_applist_title"
             android:summary="@string/summary_placeholder"
-            android:icon="@drawable/ic_apps"
             settings:controller="com.android.settings.applications.HideAppListController"
             android:fragment="com.android.settings.applications.HideAppListSettings" />
     </PreferenceCategory>
